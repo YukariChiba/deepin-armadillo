@@ -1,9 +1,9 @@
 ### Armadillo: C++ Library for Linear Algebra & Scientific Computing  
 http://arma.sourceforge.net
 
-Copyright 2008-2021 Conrad Sanderson (http://conradsanderson.id.au)  
+Copyright 2008-2022 Conrad Sanderson (http://conradsanderson.id.au)  
 Copyright 2008-2016 National ICT Australia (NICTA)  
-Copyright 2017-2021 Data61 / CSIRO  
+Copyright 2017-2022 Data61 / CSIRO  
 
 ---
 
@@ -21,7 +21,7 @@ Copyright 2017-2021 Data61 / CSIRO
 2.  [Citation Details](#2-citation-details)
 3.  [Distribution License](#3-distribution-license)
 
-4.  [Prerequisites](#4-prerequisites)
+4.  [Prerequisites and Dependencies](#4-prerequisites-and-dependencies)
 
 5.  [Linux and macOS: Installation](#5-linux-and-macos-installation)
 6.  [Linux and macOS: Compiling and Linking](#6-linux-and-macos-compiling-and-linking)
@@ -30,7 +30,7 @@ Copyright 2017-2021 Data61 / CSIRO
 8.  [Windows: Compiling and Linking](#8-windows-compiling-and-linking)
 
 9.  [Support for OpenBLAS and Intel MKL](#9-support-for-openblas-and-intel-mkl)
-10. [Support for ATLAS](#10-support-for-atlas)
+10. [Caveat on use of C++11 auto Keyword](#10-caveat-on-use-of-c11-auto-keyword)
 11. [Support for OpenMP](#11-support-for-openmp)
 
 12. [Documentation of Functions and Classes](#12-documentation-of-functions-and-classes)
@@ -102,12 +102,23 @@ informational purposes only and do not modify the License.
 
 ---
 
-### 4: Prerequisites
+### 4: Prerequisites and Dependencies
 
-Armadillo 10.x requires a C++ compiler that supports at least the C++11 standard.
-Use Armadillo 9.900 if your compiler only supports the old C++98/C++03 standards.
+The functionality of Armadillo is partly dependent on other libraries:
+- OpenBLAS (or standard BLAS)
+- LAPACK
+- ARPACK
+- SuperLU
 
-On Linux-based systems, install the GCC C++ compiler, which is available as pre-built package.
+Use of OpenBLAS (instead of standard BLAS) is strongly recommended on all systems.
+On macOS, the Accelerate framework can be used for BLAS and LAPACK functions.
+
+If sparse matrices are not needed, ARPACK and SuperLU are not required.
+Caveat: only SuperLU versions 5.2.x and 5.3.x can be used; SuperLU must be available as a shared library.
+
+Armadillo requires a C++ compiler that supports at least the C++11 standard.
+
+On Linux-based systems, install the GCC C++ compiler, which is available as a pre-built package.
 The package name might be `g++` or `gcc-c++` depending on your system.
 
 On macOS systems, a C++ compiler can be obtained by first installing Xcode (version 8 or later)
@@ -116,17 +127,6 @@ and then running the following command in a terminal window:
     xcode-select --install
 
 On Windows systems, the MinGW toolset or Visual Studio C++ 2019 (MSVC) can be used.
-
-The functionality of Armadillo is partly dependent on other libraries:
-OpenBLAS (or standard BLAS) and LAPACK (for dense matrices),
-as well as ARPACK and SuperLU (for sparse matrices).
-Caveat: only SuperLU versions 5.2.x can be used.
-On macOS, the Accelerate framework can be used for BLAS and LAPACK functions.
-
-Armadillo can work without the above libraries, but its functionality will be reduced.
-Basic functionality will be available (eg. matrix addition and multiplication),
-but operations such as eigen decomposition and system solvers will not be.
-Matrix multiplication may not be as fast (mainly for large matrices).
 
 ---
 
@@ -361,12 +361,12 @@ Comment out the line containing:
 
 ---
 
-### 10: Support for ATLAS
+### 10: Caveat on use of C++11 auto Keyword
 
-If OpenBLAS is not available, Armadillo can use the ATLAS library for faster versions
-of a subset of LAPACK and BLAS functions.
-LAPACK should still be installed to obtain full functionality.
-The minimum recommended version of ATLAS is 3.10.
+Use of the C++11 `auto` keyword is not recommended with Armadillo objects and expressions.
+
+Armadillo has a template meta-programming framework which creates lots of short lived temporaries
+that are not properly handled by `auto`.
 
 ---
 
@@ -374,10 +374,10 @@ The minimum recommended version of ATLAS is 3.10.
 
 Armadillo can use OpenMP to automatically speed up computationally
 expensive element-wise functions such as exp(), log(), cos(), etc.
-This requires a C++11/C++14 compiler with OpenMP 3.1+ support.
+This requires a C++ compiler with OpenMP 3.1+ support.
 
-For GCC and Clang compilers, use the following options to enable both C++11 and OpenMP:
-`-std=c++11 -fopenmp`
+For GCC and Clang compilers, use the following option to enable OpenMP:
+`-fopenmp`
 
 ---
 
@@ -455,18 +455,18 @@ Octave/Matlab with C++ code that uses Armadillo matrices.
 
 ### 16: Related Software Using Armadillo
 
+* ensmallen: fast and flexible library for numerical optimisation  
+  http://ensmallen.org/
+
 * MLPACK: extensive library of machine learning algorithms  
   http://mlpack.org
 
-* ensmallen: C++ library of numerical optimisation methods  
-  http://ensmallen.org/
-
-* SigPack: C++ signal processing library  
-  http://sigpack.sourceforge.net
+* CARMA: bidirectional interface between Python and Armadillo  
+  https://github.com/RUrlus/carma
 
 * RcppArmadillo: integration of Armadillo with the R system and environment  
   http://dirk.eddelbuettel.com/code/rcpp.armadillo.html
 
-* PyArmadillo: linear algebra library for Python  
+* PyArmadillo: streamlined linear algebra library for Python  
   https://pyarma.sourceforge.io
 
